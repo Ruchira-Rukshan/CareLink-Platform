@@ -6,5 +6,6 @@ public enum Role {
     LAB_TECH,
     PHARMACIST,
     SUPPLIER,
+    EMERGENCY,
     ADMIN
 }
