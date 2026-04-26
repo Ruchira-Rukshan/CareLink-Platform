@@ -90,5 +90,5 @@ The application will be accessible via your browser at `http://localhost:5173/`.
 ---
 
 <div align="center">
-  <i>Developed and Maintained by the CareLink Development Team. © 2026.</i>
+  <i>Developed and Maintained by the SLIIT DS-02-PG19 Team. © 2026.</i>
 </div>
