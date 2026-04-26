@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="frontend/src/assets/logo.png" alt="CareLink Logo" width="200"/>
   <h1>🏥 CareLink Platform</h1>
   <p>A Next-Generation Integrated Healthcare Management System</p>
 
