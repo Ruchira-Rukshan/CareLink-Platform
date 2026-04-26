@@ -5,6 +5,7 @@ public class AuthenticationResponse {
     private String role;
     private String username;
     private String message;
+    private boolean requires2fa;
 
     public AuthenticationResponse() {
     }
@@ -24,6 +25,11 @@ public class AuthenticationResponse {
         this.role = role;
         this.username = username;
         this.message = message;
+    }
+
+    public AuthenticationResponse(String message, boolean requires2fa) {
+        this.message = message;
+        this.requires2fa = requires2fa;
     }
 
     public String getToken() {
@@ -58,6 +64,14 @@ public class AuthenticationResponse {
         this.message = v;
     }
 
+    public boolean isRequires2fa() {
+        return requires2fa;
+    }
+
+    public void setRequires2fa(boolean requires2fa) {
+        this.requires2fa = requires2fa;
+    }
+
     public static AuthenticationResponseBuilder builder() {
         return new AuthenticationResponseBuilder();
     }
@@ -67,6 +81,7 @@ public class AuthenticationResponse {
         private String role;
         private String username;
         private String message;
+        private boolean requires2fa;
 
         public AuthenticationResponseBuilder token(String t) {
             this.token = t;
@@ -88,8 +103,15 @@ public class AuthenticationResponse {
             return this;
         }
 
+        public AuthenticationResponseBuilder requires2fa(boolean t) {
+            this.requires2fa = t;
+            return this;
+        }
+
         public AuthenticationResponse build() {
-            return new AuthenticationResponse(token, role, username, message);
+            AuthenticationResponse res = new AuthenticationResponse(token, role, username, message);
+            res.setRequires2fa(this.requires2fa);
+            return res;
         }
     }
 }

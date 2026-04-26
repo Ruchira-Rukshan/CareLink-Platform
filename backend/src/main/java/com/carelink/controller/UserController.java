@@ -50,6 +50,8 @@ public class UserController {
             user.setEmergencyContactName(request.getEmergencyContactName());
         if (request.getEmergencyContactPhone() != null)
             user.setEmergencyContactPhone(request.getEmergencyContactPhone());
+        if (request.getTwoFactorEnabled() != null)
+            user.setTwoFactorEnabled(request.getTwoFactorEnabled());
 
         // Doctor only fields validation
         if ("DOCTOR".equals(user.getRole().name())) {
@@ -59,6 +61,14 @@ public class UserController {
                 user.setQualifications(request.getQualifications());
             if (request.getYearsOfExperience() != null)
                 user.setYearsOfExperience(request.getYearsOfExperience());
+        }
+
+        // Supplier only fields
+        if ("SUPPLIER".equals(user.getRole().name())) {
+            if (request.getCompanyName() != null)
+                user.setCompanyName(request.getCompanyName());
+            if (request.getCompanyRegId() != null)
+                user.setCompanyRegId(request.getCompanyRegId());
         }
 
         userRepository.save(user);
@@ -75,12 +85,29 @@ public class UserController {
     }
 
     @GetMapping("/patients")
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'PHARMACIST')")
     public ResponseEntity<List<UserResponse>> getPatients() {
         return ResponseEntity.ok(
                 userRepository.findByRole(Role.PATIENT).stream()
                         .map(this::mapToResponse)
                         .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/patients/search")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'PHARMACIST')")
+    public ResponseEntity<List<UserResponse>> searchPatients(
+            @RequestParam(required = false, defaultValue = "") String query) {
+        String q = query.toLowerCase();
+        List<User> patients = userRepository.findByRole(Role.PATIENT).stream()
+                .filter(u -> (u.getUsername() != null && u.getUsername().toLowerCase().contains(q)) ||
+                        (u.getFirstName() != null && u.getFirstName().toLowerCase().contains(q)) ||
+                        (u.getLastName() != null && u.getLastName().toLowerCase().contains(q)) ||
+                        (u.getPhone() != null && u.getPhone().contains(q)))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(patients.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList()));
     }
 
     @PostMapping("/{id}/ban")
@@ -133,6 +160,10 @@ public class UserController {
                 .qualifications(user.getQualifications())
                 .yearsOfExperience(user.getYearsOfExperience())
                 .certificatePath(user.getCertificatePath())
+                .companyName(user.getCompanyName())
+                .companyRegId(user.getCompanyRegId())
+                .twoFactorEnabled(user.isTwoFactorEnabled())
+                .profilePicturePath(user.getProfilePicturePath())
                 .build();
     }
 }

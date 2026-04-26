@@ -10,12 +10,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
         private final JwtAuthenticationFilter jwtAuthFilter;
@@ -30,11 +36,36 @@ public class SecurityConfiguration {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
+                                .cors(Customizer.withDefaults())
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/auth/**").permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/api/v1/uploads/certificate/**")
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/uploads/certificate/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/uploads/invoice/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/uploads/profile-picture/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/uploads/lab-report/**").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/v1/uploads/lab-report").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/v1/uploads/certificate").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/v1/uploads/profile-picture").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/schedules/slots").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/schedules/doctors")
                                                 .permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/v1/appointments/book")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/reviews").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/laboratory/tests").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/laboratory/slots/available")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/lab-slots/available")
+                                                .permitAll()
+                                                .requestMatchers("/api/v1/sales/**").permitAll()
+                                                .requestMatchers("/api/v1/medicines/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/notices/active").permitAll()
+                                                
+                                                /* Emergency Service Rules */
+                                                .requestMatchers("/api/v1/emergency/panic").hasRole("PATIENT")
+                                                .requestMatchers("/api/v1/emergency/**").hasAnyRole("EMERGENCY", "ADMIN")
+
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -42,5 +73,17 @@ public class SecurityConfiguration {
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
+        }
+
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+                configuration.setAllowCredentials(true);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
         }
 }

@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../api/axios';
 
-const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-
 /* ─── Step Indicator ─────────────────────────────────── */
 function StepIndicator({ current, steps }) {
     return (
@@ -18,12 +16,41 @@ function StepIndicator({ current, steps }) {
                             {label}
                         </span>
                     </div>
-                    {i < steps.length - 1 && (
-                        <div className={`step-line ${i < current ? 'done' : ''}`} />
-                    )}
+                    {i < steps.length - 1 && <div className={`step-line ${i < current ? 'done' : ''}`} />}
                 </React.Fragment>
             ))}
         </div>
+    );
+}
+
+/* ─── Step 1: Company Profile ───────────────────────── */
+function Step1({ data, onChange, errors }) {
+    return (
+        <>
+            <div className="section-title">🏢 Company Information</div>
+            <div className="form-group">
+                <label className="form-label">Company Name <span className="required">*</span></label>
+                <input 
+                    className={`form-input ${errors.companyName ? 'error' : ''}`} 
+                    placeholder="MediSupply Pharma Ltd" 
+                    name="companyName" 
+                    value={data.companyName} 
+                    onChange={onChange} 
+                />
+                {errors.companyName && <span className="form-error">⚠ {errors.companyName}</span>}
+            </div>
+            <div className="form-group">
+                <label className="form-label">Business Registration ID <span className="required">*</span></label>
+                <input 
+                    className={`form-input ${errors.companyRegId ? 'error' : ''}`} 
+                    placeholder="BR-123456" 
+                    name="companyRegId" 
+                    value={data.companyRegId} 
+                    onChange={onChange} 
+                />
+                {errors.companyRegId && <span className="form-error">⚠ {errors.companyRegId}</span>}
+            </div>
+        </>
     );
 }
 
@@ -43,18 +70,17 @@ function ProfilePictureUpload({ image, onChange }) {
     }, [image]);
 
     return (
-        <div className="form-group" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div className="form-group" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
             <div 
                 onClick={() => fileRef.current.click()}
                 style={{
-                    width: '110px', height: '110px', borderRadius: '50%',
+                    width: '100px', height: '100px', borderRadius: '50%',
                     background: 'rgba(255,255,255,0.05)',
                     border: '2px dashed rgba(207, 249, 113, 0.4)',
-                    margin: '0 auto 1rem',
+                    margin: '0 auto 0.8rem',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', overflow: 'hidden', position: 'relative',
-                    transition: 'all 0.3s ease',
-                    boxShadow: preview ? '0 10px 25px rgba(0,0,0,0.3)' : 'none'
+                    transition: 'all 0.3s ease'
                 }}
                 onMouseOver={e => e.currentTarget.style.borderColor = '#CFF971'}
                 onMouseOut={e => e.currentTarget.style.borderColor = 'rgba(207, 249, 113, 0.4)'}
@@ -63,20 +89,8 @@ function ProfilePictureUpload({ image, onChange }) {
                     <img src={preview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Preview" />
                 ) : (
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '2rem', marginBottom: '4px' }}>📸</div>
-                        <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#CFF971' }}>ADD PHOTO</div>
-                    </div>
-                )}
-                {preview && (
-                    <div style={{
-                        position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        opacity: 0, transition: 'opacity 0.2s'
-                    }}
-                    onMouseOver={e => e.currentTarget.style.opacity = 1}
-                    onMouseOut={e => e.currentTarget.style.opacity = 0}
-                    >
-                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#fff' }}>CHANGE</span>
+                        <div style={{ fontSize: '1.8rem', marginBottom: '2px' }}>👤</div>
+                        <div style={{ fontSize: '0.6rem', fontWeight: 900, color: '#CFF971' }}>PHOTO</div>
                     </div>
                 )}
             </div>
@@ -84,39 +98,40 @@ function ProfilePictureUpload({ image, onChange }) {
                 const file = e.target.files[0];
                 if (file) onChange(file);
             }} />
-            <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
-                Upload a professional profile photo (Optional)
+            <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+                Upload Profile Photo
             </div>
         </div>
     );
 }
 
-/* ─── Step 1: Account & Security ─────────────────────── */
-function Step1({ data, onChange, errors, profilePic, onProfilePicChange }) {
+/* ─── Step 2: Account & Contact ──────────────────────── */
+function Step2({ data, onChange, errors, profilePic, onProfilePicChange }) {
     return (
         <>
-            <div className="section-title">🔐 Account & Security</div>
+            <div className="section-title">👤 Contact Person</div>
             <ProfilePictureUpload image={profilePic} onChange={onProfilePicChange} />
             <div className="form-grid">
                 <div className="form-group">
                     <label className="form-label">First Name <span className="required">*</span></label>
-                    <input className={`form-input ${errors.firstName ? 'error' : ''}`} placeholder="Kamal" name="firstName" value={data.firstName} onChange={onChange} />
+                    <input className={`form-input ${errors.firstName ? 'error' : ''}`} placeholder="Anura" name="firstName" value={data.firstName} onChange={onChange} />
                     {errors.firstName && <span className="form-error">⚠ {errors.firstName}</span>}
                 </div>
                 <div className="form-group">
                     <label className="form-label">Last Name <span className="required">*</span></label>
-                    <input className={`form-input ${errors.lastName ? 'error' : ''}`} placeholder="Perera" name="lastName" value={data.lastName} onChange={onChange} />
+                    <input className={`form-input ${errors.lastName ? 'error' : ''}`} placeholder="Kumara" name="lastName" value={data.lastName} onChange={onChange} />
                     {errors.lastName && <span className="form-error">⚠ {errors.lastName}</span>}
                 </div>
             </div>
+
             <div className="form-group">
-                <label className="form-label">Email Address <span className="required">*</span></label>
-                <input type="email" className={`form-input ${errors.email ? 'error' : ''}`} placeholder="kamal@email.com" name="email" value={data.email} onChange={onChange} />
+                <label className="form-label">Business Email <span className="required">*</span></label>
+                <input type="email" className={`form-input ${errors.email ? 'error' : ''}`} placeholder="anura@medisupply.com" name="email" value={data.email} onChange={onChange} />
                 {errors.email && <span className="form-error">⚠ {errors.email}</span>}
             </div>
             <div className="form-group">
-                <label className="form-label">Phone Number <span className="required">*</span></label>
-                <input type="tel" className={`form-input ${errors.phone ? 'error' : ''}`} placeholder="+94 77 123 4567" name="phone" value={data.phone} onChange={onChange} />
+                <label className="form-label">Phone Line <span className="required">*</span></label>
+                <input type="tel" className={`form-input ${errors.phone ? 'error' : ''}`} placeholder="+94 77 111 2222" name="phone" value={data.phone} onChange={onChange} />
                 {errors.phone && <span className="form-error">⚠ {errors.phone}</span>}
             </div>
             <div className="form-group">
@@ -124,6 +139,8 @@ function Step1({ data, onChange, errors, profilePic, onProfilePicChange }) {
                 <input className={`form-input ${errors.nationalId ? 'error' : ''}`} placeholder="199012345678" name="nationalId" value={data.nationalId} onChange={onChange} />
                 {errors.nationalId && <span className="form-error">⚠ {errors.nationalId}</span>}
             </div>
+
+            <div className="section-title">🔐 Security</div>
             <div className="form-grid">
                 <div className="form-group">
                     <label className="form-label">Password <span className="required">*</span></label>
@@ -136,6 +153,7 @@ function Step1({ data, onChange, errors, profilePic, onProfilePicChange }) {
                     {errors.confirmPassword && <span className="form-error">⚠ {errors.confirmPassword}</span>}
                 </div>
             </div>
+
             <div className="form-group" style={{ 
                 background: 'rgba(207, 249, 113, 0.05)', 
                 padding: '1.25rem', 
@@ -152,10 +170,10 @@ function Step1({ data, onChange, errors, profilePic, onProfilePicChange }) {
                     </div>
                     <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 800, color: '#CFF971', fontSize: '0.95rem' }}>
-                            Mandatory 2-Step Verification
+                            Required Business Verification
                         </div>
                         <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.2rem', lineHeight: 1.4 }}>
-                            For your protection, an email OTP is required to activate and access your new CareLink account.
+                            To verify your vendor credentials, a one-time passcode (OTP) via email is required during setup.
                         </div>
                     </div>
                     <div style={{ color: '#CFF971', fontSize: '0.7rem', fontWeight: 900, background: 'rgba(207, 249, 113, 0.1)', padding: '0.3rem 0.6rem', borderRadius: '20px', border: '1px solid rgba(207, 249, 113, 0.3)' }}>
@@ -163,89 +181,10 @@ function Step1({ data, onChange, errors, profilePic, onProfilePicChange }) {
                     </div>
                 </div>
             </div>
-        </>
-    );
-}
-
-/* ─── Step 2: Demographics ───────────────────────────── */
-function Step2({ data, onChange, errors }) {
-    return (
-        <>
-            <div className="section-title">👤 Basic Demographics</div>
-            <div className="form-grid">
-                <div className="form-group">
-                    <label className="form-label">Date of Birth <span className="required">*</span></label>
-                    <input type="date" className={`form-input ${errors.dob ? 'error' : ''}`} name="dob" value={data.dob} onChange={onChange} max={new Date().toISOString().split('T')[0]} />
-                    {errors.dob && <span className="form-error">⚠ {errors.dob}</span>}
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Gender / Biological Sex <span className="required">*</span></label>
-                    <select className={`form-select ${errors.gender ? 'error' : ''}`} name="gender" value={data.gender} onChange={onChange}>
-                        <option value="">Select gender</option>
-                        <option value="MALE">Male</option>
-                        <option value="FEMALE">Female</option>
-                        <option value="OTHER">Other / Prefer not to say</option>
-                    </select>
-                    {errors.gender && <span className="form-error">⚠ {errors.gender}</span>}
-                </div>
-            </div>
-            <div className="form-group">
-                <label className="form-label">Residential Address <span className="required">*</span></label>
-                <textarea
-                    className={`form-input ${errors.address ? 'error' : ''}`}
-                    placeholder="123 Main Street, Colombo 03, Sri Lanka"
-                    name="address"
-                    value={data.address}
-                    onChange={onChange}
-                    rows={3}
-                    style={{ resize: 'vertical' }}
-                />
-                {errors.address && <span className="form-error">⚠ {errors.address}</span>}
-            </div>
-        </>
-    );
-}
-
-/* ─── Step 3: Medical Baseline ───────────────────────── */
-function Step3({ data, onChange, errors }) {
-    return (
-        <>
-            <div className="section-title">🩺 Initial Medical Baseline</div>
-            <div className="form-group">
-                <label className="form-label">Blood Group <span className="required">*</span></label>
-                <select className={`form-select ${errors.bloodGroup ? 'error' : ''}`} name="bloodGroup" value={data.bloodGroup} onChange={onChange}>
-                    <option value="">Select blood group</option>
-                    {BLOOD_GROUPS.map((bg) => <option key={bg} value={bg}>{bg}</option>)}
-                </select>
-                {errors.bloodGroup && <span className="form-error">⚠ {errors.bloodGroup}</span>}
-            </div>
-            <div className="form-group">
-                <label className="form-label">Known Allergies</label>
-                <input
-                    className="form-input"
-                    placeholder="e.g. Penicillin, Peanuts (leave blank if none)"
-                    name="allergies"
-                    value={data.allergies}
-                    onChange={onChange}
-                />
-            </div>
-            <div className="section-title" style={{ marginTop: '1rem' }}>🆘 Emergency Contact</div>
-            <div className="form-grid">
-                <div className="form-group">
-                    <label className="form-label">Contact Name <span className="required">*</span></label>
-                    <input className={`form-input ${errors.emergencyContactName ? 'error' : ''}`} placeholder="Saman Perera" name="emergencyContactName" value={data.emergencyContactName} onChange={onChange} />
-                    {errors.emergencyContactName && <span className="form-error">⚠ {errors.emergencyContactName}</span>}
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Contact Phone <span className="required">*</span></label>
-                    <input type="tel" className={`form-input ${errors.emergencyContactPhone ? 'error' : ''}`} placeholder="+94 71 987 6543" name="emergencyContactPhone" value={data.emergencyContactPhone} onChange={onChange} />
-                    {errors.emergencyContactPhone && <span className="form-error">⚠ {errors.emergencyContactPhone}</span>}
-                </div>
-            </div>
 
             <div style={{ 
-                marginTop: '2rem', 
-                padding: '1.5rem', 
+                marginTop: '1.5rem', 
+                padding: '1.25rem', 
                 background: 'rgba(255,255,255,0.03)', 
                 borderRadius: '16px',
                 border: errors.acceptedTerms ? '1px solid rgba(255, 71, 87, 0.3)' : '1px solid rgba(255,255,255,0.05)',
@@ -265,12 +204,12 @@ function Step3({ data, onChange, errors }) {
                             cursor: 'pointer'
                         }}
                     />
-                    <span style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
-                        I agree to the <Link to="/terms?type=patient" style={{ color: '#CFF971', fontWeight: 600, textDecoration: 'none', borderBottom: '1px solid rgba(207, 249, 113, 0.3)' }}>Terms and Conditions</Link> of CareLink and understand how my data will be processed.
+                    <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                        I agree to the <Link to="/terms?type=supplier" style={{ color: '#CFF971', fontWeight: 600, textDecoration: 'none', borderBottom: '1px solid rgba(207, 249, 113, 0.3)' }}>Business Terms and Conditions</Link> for CareLink vendors and confirm my business registry is active.
                     </span>
                 </label>
                 {errors.acceptedTerms && (
-                    <div style={{ color: '#ff4757', fontSize: '0.8rem', marginTop: '8px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ color: '#ff4757', fontSize: '0.78rem', marginTop: '8px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         {errors.acceptedTerms}
                     </div>
@@ -280,44 +219,42 @@ function Step3({ data, onChange, errors }) {
     );
 }
 
-/* ─── MAIN COMPONENT ─────────────────────────────────── */
-const STEPS = ['Account', 'Demographics', 'Medical Info'];
+const STEPS = ['Company', 'Identity'];
 
-const INITIAL = {
-    firstName: '', lastName: '', email: '', phone: '', nationalId: '',
-    password: '', confirmPassword: '',
-    dob: '', gender: '', address: '',
-    bloodGroup: '', allergies: '', emergencyContactName: '', emergencyContactPhone: '',
-    twoFactorEnabled: true,
-    acceptedTerms: false
-};
-
-export default function PatientRegister() {
+export default function SupplierRegister() {
     const navigate = useNavigate();
     const [step, setStep] = useState(0);
-    const [form, setForm] = useState(INITIAL);
+    const [form, setForm] = useState({
+        companyName: '',
+        companyRegId: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        nationalId: '',
+        password: '',
+        confirmPassword: '',
+        twoFactorEnabled: true,
+        acceptedTerms: false,
+    });
     const [profilePic, setProfilePic] = useState(null);
     const [errors, setErrors] = useState({});
-    const [apiError, setApiError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [apiError, setApiError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    // Persistence: Load from sessionStorage on mount
+    // Persistence
     React.useEffect(() => {
-        const saved = sessionStorage.getItem('cl_patient_reg_form');
+        const saved = sessionStorage.getItem('cl_supplier_reg_form');
         if (saved) {
-            try {
-                setForm(JSON.parse(saved));
-            } catch (e) {
-                console.error('Failed to parse saved form', e);
-            }
+            try { setForm(JSON.parse(saved)); } catch (e) {}
         }
     }, []);
 
-    // Persistence: Save to sessionStorage on form change
     React.useEffect(() => {
-        if (form !== INITIAL) {
-            sessionStorage.setItem('cl_patient_reg_form', JSON.stringify(form));
+        const isDefault = form.companyName === '' && form.email === '';
+        if (!isDefault) {
+            sessionStorage.setItem('cl_supplier_reg_form', JSON.stringify(form));
         }
     }, [form]);
 
@@ -325,12 +262,12 @@ export default function PatientRegister() {
         let { name, value } = e.target;
 
         // 1. Names: Filter out numbers
-        if (name === 'firstName' || name === 'lastName' || name === 'emergencyContactName') {
+        if (name === 'firstName' || name === 'lastName') {
             value = value.replace(/[0-9]/g, '');
         }
 
         // 2. Phone: Filter non-numbers and limit digits to 10
-        if (name === 'phone' || name === 'emergencyContactPhone') {
+        if (name === 'phone') {
             value = value.replace(/\D/g, '').slice(0, 10);
         }
 
@@ -351,52 +288,37 @@ export default function PatientRegister() {
     const validateStep = () => {
         const e = {};
         if (step === 0) {
+            if (!form.companyName.trim()) e.companyName = 'Company name is required';
+            if (!form.companyRegId.trim()) e.companyRegId = 'Registration ID is required';
+        } else {
             if (!form.firstName.trim()) e.firstName = 'First name is required';
             if (!form.lastName.trim()) e.lastName = 'Last name is required';
             if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) e.email = 'Valid email required';
             
             if (!form.phone.trim()) {
-                e.phone = 'Phone number is required';
+                e.phone = 'Phone line is required';
             } else if (form.phone.length !== 10) {
                 e.phone = 'Phone number must be exactly 10 digits';
             }
 
             if (!form.nationalId.trim()) {
                 e.nationalId = 'National ID is required';
-            } else if (form.nationalId.length < 9) { // Basic sanity check for min length
+            } else if (form.nationalId.length < 9) {
                 e.nationalId = 'National ID is too short';
             } else if (form.nationalId.length > 13) {
                 e.nationalId = 'Max 13 characters allowed';
             }
 
-            if (form.password.length < 8) e.password = 'Password must be at least 8 characters';
-            if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
-        }
-        if (step === 1) {
-            if (!form.dob) {
-                e.dob = 'Date of birth is required';
-            } else {
-                const today = new Date();
-                const birth = new Date(form.dob);
-                const age = today.getFullYear() - birth.getFullYear()
-                    - (today < new Date(today.getFullYear(), birth.getMonth(), birth.getDate()) ? 1 : 0);
-                if (age < 18) e.dob = 'You must be at least 18 years old to register';
-            }
-            if (!form.gender) e.gender = 'Gender is required';
-            if (!form.address.trim()) e.address = 'Address is required';
-        }
-        if (step === 2) {
-            if (!form.bloodGroup) e.bloodGroup = 'Blood group is required';
-            if (!form.emergencyContactName.trim()) e.emergencyContactName = 'Emergency contact name is required';
-            if (!form.emergencyContactPhone.trim()) e.emergencyContactPhone = 'Emergency contact phone is required';
-            if (!form.acceptedTerms) e.acceptedTerms = 'You must accept the terms and conditions';
+            if (form.password.length < 8) e.password = 'Min. 8 characters';
+            if (form.password !== form.confirmPassword) e.confirmPassword = 'Do not match';
+            if (!form.acceptedTerms) e.acceptedTerms = 'You must accept terms';
         }
         setErrors(e);
         return Object.keys(e).length === 0;
     };
 
-    const nextStep = () => { if (validateStep()) setStep((s) => s + 1); };
-    const prevStep = () => setStep((s) => s - 1);
+    const nextStep = () => { if (validateStep()) setStep(1); };
+    const prevStep = () => setStep(0);
 
     const handleSubmit = async () => {
         if (!validateStep()) return;
@@ -407,13 +329,11 @@ export default function PatientRegister() {
             const requestData = {
                 ...form,
                 username: form.email,
-                role: 'PATIENT',
+                role: 'SUPPLIER'
             };
             
-            // Append the JSON part as a blob with correct content type
             formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
             
-            // Append files if present
             if (profilePic) {
                 formData.append('profilePic', profilePic);
             }
@@ -421,18 +341,16 @@ export default function PatientRegister() {
             const res = await api.post('/v1/auth/register', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            
+
             if (res.data.requires2fa) {
                 navigate('/verify-otp', { state: { username: form.email } });
                 return;
             }
-            
+
             setSuccess(true);
         } catch (err) {
-            const msg = err.response?.data?.message || 'Registration failed. Please try again.';
-            setApiError(msg);
-            const step1Fields = ['email', 'phone', 'national id'];
-            if (step1Fields.some((f) => msg.toLowerCase().includes(f))) {
+            setApiError(err.response?.data?.message || 'Registration failed.');
+            if (err.response?.data?.message?.toLowerCase().includes('company') || err.response?.data?.message?.toLowerCase().includes('registration')) {
                 setStep(0);
             }
         } finally {
@@ -441,7 +359,6 @@ export default function PatientRegister() {
     };
 
     if (success) {
-        const hasPendingBooking = !!sessionStorage.getItem('cl_pending_booking') || !!sessionStorage.getItem('cl_pending_lab_booking');
         return (
             <div className="auth-page">
                 <div className="auth-card animate-in" style={{ textAlign: 'center', padding: '3.5rem 2rem' }}>
@@ -467,24 +384,19 @@ export default function PatientRegister() {
                         </div>
                     </div>
 
-                    <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', marginBottom: '1rem', letterSpacing: '-0.01em' }}>Registration Successful!</h2>
+                    <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', marginBottom: '1rem' }}>Registration Complete!</h2>
                     
                     <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: '500px', margin: '0 auto 2.5rem' }}>
-                        Your patient account has been created successfully. <br />
-                        {hasPendingBooking 
-                            ? 'Please sign in to complete your pending appointment booking.' 
-                            : 'You can now sign in to start managing your healthcare journey.'}
+                        Your vendor profile has been submitted and is currently <span style={{ color: '#f59e0b', fontWeight: 700 }}>Pending Admin Approval</span>.<br />
+                        Our team will verify your business details within 48 hours.
                     </p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '300px', margin: '0 auto' }}>
                         <button className="btn btn-primary" onClick={() => {
-                            sessionStorage.removeItem('cl_patient_reg_form');
+                            sessionStorage.removeItem('cl_supplier_reg_form');
                             navigate('/login');
                         }} style={{ fontSize: '1.05rem', padding: '1rem', fontWeight: 700, boxShadow: '0 8px 15px rgba(207,249,113,0.2)' }}>
-                            {hasPendingBooking ? '🔑 Sign In & Complete' : 'Go to Sign In'}
-                        </button>
-                        <button className="btn btn-ghost" onClick={() => navigate('/')} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
-                            Back to Homepage
+                            Go to Sign In
                         </button>
                     </div>
                 </div>
@@ -496,36 +408,32 @@ export default function PatientRegister() {
         <div className="auth-page">
             <div className="auth-card wide animate-in">
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '2rem' }}>
                     <Link to="/register" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '1.2rem' }}>←</Link>
-                    <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}>
-                        <div className="auth-logo" style={{ marginBottom: 0 }}>
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-                            <span style={{ fontSize: '1.1rem' }}>Patient Registration</span>
-                        </div>
-                    </Link>
+                    <div className="auth-logo" style={{ marginBottom: 0 }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                        <span style={{ fontSize: '1.15rem', color: '#fff', fontWeight: 700 }}>Vendor Portal</span>
+                    </div>
                 </div>
 
                 <StepIndicator current={step} steps={STEPS} />
 
                 {apiError && <div className="alert alert-error">⚠ {apiError}</div>}
 
-                {/* Form Steps */}
-                <div className="animate-in" key={step}>
-                    {step === 0 && <Step1 data={form} onChange={handleChange} errors={errors} profilePic={profilePic} onProfilePicChange={setProfilePic} />}
-                    {step === 1 && <Step2 data={form} onChange={handleChange} errors={errors} />}
-                    {step === 2 && <Step3 data={form} onChange={handleChange} errors={errors} />}
+                <div className="animate-in" key={step} style={{ marginTop: '1.5rem' }}>
+                    {step === 0 ? <Step1 data={form} onChange={handleChange} errors={errors} /> : <Step2 data={form} onChange={handleChange} errors={errors} profilePic={profilePic} onProfilePicChange={setProfilePic} />}
                 </div>
 
-                {/* Navigation */}
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '2.5rem', alignItems: 'center' }}>
                     {step > 0 && (
-                        <button className="btn btn-outline" onClick={prevStep} style={{ flex: 1, height: '52px', margin: 0 }}>
+                        <button className="btn btn-outline" onClick={prevStep} style={{ flex: 1, margin: 0, height: '52px' }}>
                             ← Back
                         </button>
                     )}
-                    {step < 2 ? (
-                        <button className="btn btn-primary" onClick={nextStep} style={{ flex: 2, height: '52px', margin: 0 }}>
+                    {step === 0 ? (
+                        <button className="btn btn-primary" onClick={nextStep} style={{ flex: 2, margin: 0, height: '52px' }}>
                             Continue →
                         </button>
                     ) : (
@@ -541,10 +449,15 @@ export default function PatientRegister() {
                                 cursor: !form.acceptedTerms ? 'not-allowed' : 'pointer'
                             }}
                         >
-                            {loading ? <><div className="spinner" /> Creating Account...</> : '🏥 Create Patient Account'}
+                            {loading ? 'Processing...' : '📦 Register as Vendor'}
                         </button>
                     )}
                 </div>
+
+                <p className="text-center" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '2rem' }}>
+                    Already have a vendor account?{' '}
+                    <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
+                </p>
             </div>
         </div>
     );

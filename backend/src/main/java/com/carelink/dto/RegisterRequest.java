@@ -27,6 +27,11 @@ public class RegisterRequest {
     private String qualifications;
     private String yearsOfExperience;
 
+    // Supplier
+    private String companyName;
+    private String companyRegId;
+    private boolean twoFactorEnabled;
+
     public RegisterRequest() {
     }
 
@@ -180,5 +185,29 @@ public class RegisterRequest {
 
     public void setYearsOfExperience(String v) {
         this.yearsOfExperience = v;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyRegId() {
+        return companyRegId;
+    }
+
+    public void setCompanyRegId(String companyRegId) {
+        this.companyRegId = companyRegId;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
     }
 }

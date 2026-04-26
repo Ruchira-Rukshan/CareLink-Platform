@@ -11,6 +11,9 @@ public class UpdateUserRequest {
     private String specialization;
     private String qualifications;
     private Integer yearsOfExperience;
+    private Boolean twoFactorEnabled;
+    private String companyName;
+    private String companyRegId;
 
     public UpdateUserRequest() {
     }
@@ -93,5 +96,29 @@ public class UpdateUserRequest {
 
     public void setYearsOfExperience(Integer yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
+    }
+
+    public Boolean getTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyRegId() {
+        return companyRegId;
+    }
+
+    public void setCompanyRegId(String companyRegId) {
+        this.companyRegId = companyRegId;
     }
 }

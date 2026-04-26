@@ -27,6 +27,10 @@ public class UserResponse {
     private String qualifications;
     private Integer yearsOfExperience;
     private String certificatePath;
+    private String profilePicturePath;
+    private String companyName;
+    private String companyRegId;
+    private boolean twoFactorEnabled;
 
     public UserResponse() {
     }
@@ -35,7 +39,8 @@ public class UserResponse {
             boolean approved, String firstName, String lastName, String specialization, String phone,
             String nationalId, String dob, String gender, String address, String bloodGroup,
             String allergies, String emergencyContactName, String emergencyContactPhone,
-            String medicalLicenseNumber, String qualifications, Integer yearsOfExperience, String certificatePath) {
+            String medicalLicenseNumber, String qualifications, Integer yearsOfExperience, String certificatePath, String profilePicturePath,
+            String companyName, String companyRegId, boolean twoFactorEnabled) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -58,6 +63,10 @@ public class UserResponse {
         this.qualifications = qualifications;
         this.yearsOfExperience = yearsOfExperience;
         this.certificatePath = certificatePath;
+        this.profilePicturePath = profilePicturePath;
+        this.companyName = companyName;
+        this.companyRegId = companyRegId;
+        this.twoFactorEnabled = twoFactorEnabled;
     }
 
     public Long getId() {
@@ -148,6 +157,22 @@ public class UserResponse {
         return certificatePath;
     }
 
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public String getCompanyRegId() {
+        return companyRegId;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
     public static UserResponseBuilder builder() {
         return new UserResponseBuilder();
     }
@@ -164,6 +189,10 @@ public class UserResponse {
         private String medicalLicenseNumber, qualifications;
         private Integer yearsOfExperience;
         private String certificatePath;
+        private String profilePicturePath;
+        private String companyName;
+        private String companyRegId;
+        private boolean twoFactorEnabled;
 
         public UserResponseBuilder id(Long v) {
             this.id = v;
@@ -275,12 +304,33 @@ public class UserResponse {
             return this;
         }
 
+        public UserResponseBuilder profilePicturePath(String v) {
+            this.profilePicturePath = v;
+            return this;
+        }
+
+        public UserResponseBuilder companyName(String v) {
+            this.companyName = v;
+            return this;
+        }
+
+        public UserResponseBuilder companyRegId(String v) {
+            this.companyRegId = v;
+            return this;
+        }
+
+        public UserResponseBuilder twoFactorEnabled(boolean v) {
+            this.twoFactorEnabled = v;
+            return this;
+        }
+
         public UserResponse build() {
             return new UserResponse(
                     id, username, email, role, banned, approved, firstName, lastName, specialization, phone,
                     nationalId, dob, gender, address, bloodGroup, allergies, emergencyContactName,
                     emergencyContactPhone,
-                    medicalLicenseNumber, qualifications, yearsOfExperience, certificatePath);
+                    medicalLicenseNumber, qualifications, yearsOfExperience, certificatePath, profilePicturePath,
+                    companyName, companyRegId, twoFactorEnabled);
         }
     }
 }

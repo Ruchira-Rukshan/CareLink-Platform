@@ -41,19 +41,38 @@ export function AuthProvider({ children }) {
 
     const login = useCallback(async (username, password) => {
         const res = await api.post('/v1/auth/login', { username, password });
-        const { token } = res.data;
+        
+        if (res.data.requires2fa) {
+            return res.data; // Let the Login page handle redirect to OTP
+        }
 
+        const { token } = res.data;
+        if (!token) {
+            return res.data; // Handle success but no JWT (unapproved)
+        }
         localStorage.setItem('cl_token', token);
 
         // Now fetch full profile immediately after extracting token
         const fullProfile = await fetchProfile();
-        return fullProfile;
+        return { user: fullProfile, token, ...res.data };
     }, []);
 
     const logout = useCallback(() => {
         localStorage.removeItem('cl_token');
         localStorage.removeItem('cl_user');
+        localStorage.removeItem('cl_role');
         setUser(null);
+    }, []);
+
+    const verify2fa = useCallback(async (username, code) => {
+        const res = await api.post('/v1/auth/verify-2fa', { username, code });
+        const { token } = res.data;
+        if (!token) {
+            return res.data; // Success but no JWT (pending approval)
+        }
+        localStorage.setItem('cl_token', token);
+        const fullProfile = await fetchProfile();
+        return { user: fullProfile, token, ...res.data };
     }, []);
 
     const updateProfile = async (data) => {
@@ -68,7 +87,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, updateProfile }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, updateProfile, verify2fa }}>
             {children}
         </AuthContext.Provider>
     );

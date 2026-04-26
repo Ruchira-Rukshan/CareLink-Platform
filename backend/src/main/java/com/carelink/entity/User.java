@@ -30,10 +30,11 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private Role role;
 
     private boolean banned = false;
-    private boolean approved = true;
+    private boolean approved = false;
 
     // ── Common Profile Fields ─────────────────────────────────
     private String firstName;
@@ -53,12 +54,25 @@ public class User implements UserDetails {
     private String emergencyContactPhone;
 
     // ── Doctor-Specific Fields ────────────────────────────────
+    @Column(unique = true)
     private String medicalLicenseNumber;
     private String specialization;
     @Column(length = 512)
     private String qualifications;
     private Integer yearsOfExperience;
     private String certificatePath;
+    private String profilePicturePath;
+
+    // ── Supplier-Specific Fields ──────────────────────────────
+    @Column(unique = true)
+    private String companyName;
+    @Column(unique = true)
+    private String companyRegId;
+    private String resetToken;
+    private java.time.LocalDateTime resetTokenExpiry;
+    private boolean twoFactorEnabled = false;
+    private String twoFactorCode;
+    private java.time.LocalDateTime twoFactorExpiry;
 
     // ─────────────────────────────────────────────────────────
     public User() {
@@ -86,7 +100,7 @@ public class User implements UserDetails {
         private String password;
         private Role role;
         private boolean banned;
-        private boolean approved = true;
+        private boolean approved = false;
         private String firstName;
         private String lastName;
         private String phone;
@@ -103,6 +117,14 @@ public class User implements UserDetails {
         private String qualifications;
         private Integer yearsOfExperience;
         private String certificatePath;
+        private String profilePicturePath;
+        private String companyName;
+        private String companyRegId;
+        private String resetToken;
+        private java.time.LocalDateTime resetTokenExpiry;
+        private boolean twoFactorEnabled;
+        private String twoFactorCode;
+        private java.time.LocalDateTime twoFactorExpiry;
 
         public UserBuilder username(String v) {
             this.username = v;
@@ -213,6 +235,46 @@ public class User implements UserDetails {
             this.certificatePath = v;
             return this;
         }
+        
+        public UserBuilder profilePicturePath(String v) {
+            this.profilePicturePath = v;
+            return this;
+        }
+
+        public UserBuilder companyName(String v) {
+            this.companyName = v;
+            return this;
+        }
+
+        public UserBuilder companyRegId(String v) {
+            this.companyRegId = v;
+            return this;
+        }
+
+        public UserBuilder resetToken(String v) {
+            this.resetToken = v;
+            return this;
+        }
+
+        public UserBuilder resetTokenExpiry(java.time.LocalDateTime v) {
+            this.resetTokenExpiry = v;
+            return this;
+        }
+
+        public UserBuilder twoFactorEnabled(boolean v) {
+            this.twoFactorEnabled = v;
+            return this;
+        }
+
+        public UserBuilder twoFactorCode(String v) {
+            this.twoFactorCode = v;
+            return this;
+        }
+
+        public UserBuilder twoFactorExpiry(java.time.LocalDateTime v) {
+            this.twoFactorExpiry = v;
+            return this;
+        }
 
         public User build() {
             User u = new User(username, email, password, role, banned, approved);
@@ -232,6 +294,14 @@ public class User implements UserDetails {
             u.qualifications = this.qualifications;
             u.yearsOfExperience = this.yearsOfExperience;
             u.certificatePath = this.certificatePath;
+            u.profilePicturePath = this.profilePicturePath;
+            u.companyName = this.companyName;
+            u.companyRegId = this.companyRegId;
+            u.resetToken = this.resetToken;
+            u.resetTokenExpiry = this.resetTokenExpiry;
+            u.twoFactorEnabled = this.twoFactorEnabled;
+            u.twoFactorCode = this.twoFactorCode;
+            u.twoFactorExpiry = this.twoFactorExpiry;
             return u;
         }
     }
@@ -423,6 +493,70 @@ public class User implements UserDetails {
         this.certificatePath = v;
     }
 
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public void setProfilePicturePath(String v) {
+        this.profilePicturePath = v;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyRegId() {
+        return companyRegId;
+    }
+
+    public void setCompanyRegId(String companyRegId) {
+        this.companyRegId = companyRegId;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public java.time.LocalDateTime getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(java.time.LocalDateTime resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public String getTwoFactorCode() {
+        return twoFactorCode;
+    }
+
+    public void setTwoFactorCode(String twoFactorCode) {
+        this.twoFactorCode = twoFactorCode;
+    }
+
+    public java.time.LocalDateTime getTwoFactorExpiry() {
+        return twoFactorExpiry;
+    }
+
+    public void setTwoFactorExpiry(java.time.LocalDateTime twoFactorExpiry) {
+        this.twoFactorExpiry = twoFactorExpiry;
+    }
+
     // ── UserDetails ───────────────────────────────────────────
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -446,6 +580,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return approved;
     }
 }
